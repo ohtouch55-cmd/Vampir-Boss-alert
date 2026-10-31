@@ -1,18 +1,19 @@
 name: VAMPIR Boss Alert
 
 on:
-  schedule:
-    - cron: '50 2,10 * * *'
   workflow_dispatch:
 
 jobs:
   alert:
     runs-on: ubuntu-latest
     steps:
-      - name: Send Boss Alert
-        run: |
-          curl -sS -X POST "$DISCORD_WEBHOOK_URL" \
-          -H "Content-Type: application/json" \
-          -d '{"content":"🔔 VAMPIR WORLD BOSS ALERT! อีก 10 นาที World Boss จะเกิดแล้ว! เตรียมตัวให้พร้อม ⚔️"}'
+      - name: Send Test Message
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
+        run: |
+          curl --fail-with-body -sS -X POST \
+            "https://discord.com/api/v10/channels/${DISCORD_CHANNEL_ID}/messages" \
+            -H "Authorization: Bot ${DISCORD_BOT_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg content '🤖 VAMPIR BOSS BOT ทดสอบระบบสำเร็จ!' '{content: $content}')"
