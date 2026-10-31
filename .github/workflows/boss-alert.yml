@@ -1,19 +1,39 @@
+
 name: VAMPIR Boss Alert
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'
+
+permissions:
+  contents: write
 
 jobs:
   alert:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Send Test Message
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run Boss Alert Bot
         env:
           DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
           DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
+        run: python boss_alert.py
+
+      - name: Save boss alert state
         run: |
-          curl --fail-with-body -sS -X POST \
-            "https://discord.com/api/v10/channels/${DISCORD_CHANNEL_ID}/messages" \
-            -H "Authorization: Bot ${DISCORD_BOT_TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d "$(jq -n --arg content '🤖 VAMPIR BOSS BOT ทดสอบระบบสำเร็จ!' '{content: $content}')"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add boss_state.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update boss alert state"
+            git push
+          fi
