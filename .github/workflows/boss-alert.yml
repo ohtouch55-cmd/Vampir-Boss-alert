@@ -1,0 +1,18 @@
+name: VAMPIR Boss Alert
+
+on:
+  schedule:
+    - cron: '50 2,10 * * *'
+  workflow_dispatch:
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Boss Alert
+        run: |
+          curl -sS -X POST "$DISCORD_WEBHOOK_URL" \
+          -H "Content-Type: application/json" \
+          -d '{"content":"🔔 VAMPIR WORLD BOSS ALERT! อีก 10 นาที World Boss จะเกิดแล้ว! เตรียมตัวให้พร้อม ⚔️"}'
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
