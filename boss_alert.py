@@ -10,10 +10,13 @@ STATE_FILE = "boss_state.json"
 THAI_TZ = timezone(timedelta(hours=7))
 
 BOSSES = {
-    "12:00": [
+     "12:00": [
         "เดเซอร์ต LV83",
         "ยูเซอร์พาเตอร์ LV107",
         "บราคิอุม LV63"
+    ],
+    "15:15": [
+        "Test"
     ],
     "20:00": [
         "เคลมามุส LV70",
